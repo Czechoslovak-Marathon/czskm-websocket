@@ -4,7 +4,7 @@ import requests
 
 loop = asyncio.get_event_loop()
 ws = simpleobsws.obsws(host='localhost', port=4444, password='', loop=loop)
-key = '9be3e8f8-336a-43ee-aeb7-3cc403b97f46'
+key = ''
 
 async def switch_layout():
     await ws.connect()
