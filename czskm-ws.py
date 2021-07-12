@@ -4,6 +4,7 @@ import requests
 
 loop = asyncio.get_event_loop()
 ws = simpleobsws.obsws(host='localhost', port=4444, password='', loop=loop)
+key = '9be3e8f8-336a-43ee-aeb7-3cc403b97f46'
 
 async def switch_layout():
     await ws.connect()
@@ -12,8 +13,8 @@ async def switch_layout():
     while True:
         itemlist = await ws.call('GetSceneItemList')
         itemlist = itemlist['sceneItems']
-        current_layout = requests.get('http://localhost:9090/bundles/nodecg-czskm/dashboard/currentlayout.json?key=...').text
-        rtmp_settings = requests.get('http://localhost:9090/bundles/nodecg-czskm/dashboard/rtmpchange.json?key=...').text
+        current_layout = requests.get('http://localhost:9090/bundles/nodecg-czskm/dashboard/currentlayout.json?key=' + key).text
+        rtmp_settings = requests.get('http://localhost:9090/bundles/nodecg-czskm/dashboard/rtmpchange.json?key=' + key).text
         split_settings = rtmp_settings.split('|')
         if current_layout:
             if current_layout != old_layout:
