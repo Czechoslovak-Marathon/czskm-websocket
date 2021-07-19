@@ -13,10 +13,11 @@ async def switch_layout():
     while True:
         itemlist = await ws.call('GetSceneItemList')
         itemlist = itemlist['sceneItems']
-        current_layout = requests.get('http://localhost:9090/bundles/nodecg-czskm/dashboard/currentlayout.json?key=' + key).text
-        rtmp_settings = requests.get('http://localhost:9090/bundles/nodecg-czskm/dashboard/rtmpchange.json?key=' + key).text
-        split_settings = rtmp_settings.split('|')
+        request = requests.get('http://localhost:9090/nodecg-czskm/ws', {'key': key}).json()
+        current_layout = request['layout']
+        rtmp_settings = request['rtmp']
         if current_layout:
+            current_layout = current_layout.split('.')[0]
             if current_layout != old_layout:
                 await asyncio.sleep(0.5)
                 for item in itemlist:
@@ -26,7 +27,6 @@ async def switch_layout():
                             'source': item['sourceName'],
                             'render': True
                         })
-                        old_layout = current_layout
                         continue
                     if item['sourceName'] not in ['Background', 'Layout']:
                         await ws.call('SetSceneItemRender', data={
@@ -34,8 +34,10 @@ async def switch_layout():
                             'source': item['sourceName'],
                             'render': False
                         })
+                old_layout = current_layout
         if rtmp_settings:
             if rtmp_settings != old_rtmp:
+                split_settings = rtmp_settings.split('|')
                 await ws.call('SetSourceSettings', data={
                     'sourceName': split_settings[0],
                     'sourceSettings': {
