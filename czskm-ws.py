@@ -14,7 +14,7 @@ async def switch_layout():
     while True:
         itemlist = await ws.call('GetSceneItemList')
         itemlist = itemlist['sceneItems']
-        request = requests.get(f'http://{}/nodecg-czskm/ws', {'key': key}).json()
+        request = requests.get(f'http://{ip}/nodecg-czskm/ws', {'key': key}).json()
         current_layout = request['layout']
         rtmp_settings = request['rtmp']
         if current_layout:
