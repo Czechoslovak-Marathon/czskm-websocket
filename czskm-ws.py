@@ -3,7 +3,7 @@ import simpleobsws
 import requests
 
 loop = asyncio.get_event_loop()
-ws = simpleobsws.obsws(host='localhost', port=4444, password='', loop=loop)
+ws = simpleobsws.obsws(host='host.docker.internal', port=4444, password='', loop=loop)
 key = ''
 ip = ''
 
@@ -29,7 +29,7 @@ async def switch_layout():
                             'render': True
                         })
                         continue
-                    if item['sourceName'] not in ['Background', 'Layout']:
+                    if item['sourceName'] not in ['Background', 'Layout', 'Donationtotal']:
                         await ws.call('SetSceneItemRender', data={
                             'scene-name': 'Speedcontrol',
                             'source': item['sourceName'],
