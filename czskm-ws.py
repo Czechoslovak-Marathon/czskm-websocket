@@ -25,7 +25,6 @@ async def switch_layout():
         request = requests.get(f'https://{ip}/nodecg-czskm/ws', {'key': key}).json()
         current_layout = request['layout']
         rtmp_settings = request['rtmp']
-        print(rtmp_settings)
         if current_layout:
             current_layout = current_layout.split('.')[0]
             if current_layout != old_layout:
@@ -47,7 +46,7 @@ async def switch_layout():
                         })
                         await ws.call(request)
                         continue
-                    if item['sourceName'] not in ['Background', 'Graphics', 'Donationtotal', 'Donation']:
+                    if item['sourceName'] not in ['Background', 'Graphics', 'Donationtotal', 'Donation', 'Music']:
                         request = simpleobsws.Request('SetSceneItemEnabled', {
                             'sceneName': 'Speedcontrol',
                             'sceneItemId': item['sceneItemId'],
@@ -55,6 +54,11 @@ async def switch_layout():
                         })
                         await ws.call(request)
                 old_layout = current_layout
+                if current_layout not in ['continue', 'end', 'start', 'intermission']:
+                    request = simpleobsws.Request('StartRecord')
+                else:
+                    request = simpleobsws.Request('StopRecord')
+                await ws.call(request)
         if rtmp_settings:
             if rtmp_settings != old_rtmp:
                 rtmp_request = simpleobsws.Request('GetInputList')
