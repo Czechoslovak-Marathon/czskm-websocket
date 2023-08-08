@@ -28,6 +28,8 @@ async def switch_layout():
         current_layout = request['layout']
         rtmp_settings = request['rtmp']
         music = request['music']
+        run = request['currentRun']
+        recorded = False
         if current_layout:
             current_layout = current_layout.split('.')[0]
             if current_layout != old_layout:
@@ -61,7 +63,17 @@ async def switch_layout():
                 else:
                     request = simpleobsws.Request('StopRecord')
                     requests.get(music_url)
-                await ws.call(request)
+                    recorded = True
+                if not recorded:
+                    await ws.call(request)
+                else:
+                    output = await ws.call(request)
+                    recorded = False
+                    if output.responseData:
+                        path = output.responseData["outputPath"].split('/')[-1]
+                        with open('/app/data/runs.txt', 'a') as file:
+                            run = run.replace('|', '｜')
+                            file.write(f'{path}|Czechoslovak Marathon Winter 2023 ｜ {run}\n')
                 old_layout = current_layout
         if rtmp_settings:
             if rtmp_settings != old_rtmp:
